@@ -13,6 +13,8 @@ Both the admin UI and the client sync API are served on the same **Web UI** inte
 
 ## Getting set up
 
+Follow these steps for a fresh installation. After an update or restore, use your existing Joplin credentials; you do not need to reset the admin password again.
+
 1. Open Joplin Server from the **Dashboard** tab and start it.
 2. Run the **Reset User Password** action. Leave the email as `admin@localhost` (the built-in admin) and run it — you'll get a strong password back. Joplin ships with a default `admin@localhost` / `admin` login, so do this before anything else.
 3. Open the **Web UI** and sign in with `admin@localhost` and your new password. Change the admin email and finish any profile setup from the web UI.

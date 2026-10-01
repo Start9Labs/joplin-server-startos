@@ -12,6 +12,12 @@ export const initializeService = sdk.setupOnInit(async (effects, kind) => {
       signupEnabled: false,
       smtp: { selection: 'disabled', value: {} },
     })
+
+    await sdk.action.createOwnTask(effects, resetPassword, 'important', {
+      reason: i18n(
+        'Joplin Server ships with default admin credentials (admin@localhost / admin). Set a strong password from the "Reset User Password" action right away.',
+      ),
+    })
   } else {
     const existing = await storeJson.read().once()
     await storeJson.merge(effects, {
@@ -19,10 +25,4 @@ export const initializeService = sdk.setupOnInit(async (effects, kind) => {
       mfaEncryptionKey: existing?.mfaEncryptionKey || generateMfaKey(),
     })
   }
-
-  await sdk.action.createOwnTask(effects, resetPassword, 'important', {
-    reason: i18n(
-      'Joplin Server ships with default admin credentials (admin@localhost / admin). Set a strong password from the "Reset User Password" action right away.',
-    ),
-  })
 })

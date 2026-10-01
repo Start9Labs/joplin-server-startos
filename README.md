@@ -64,7 +64,7 @@ Joplin Server is configured with the default `STORAGE_DRIVER=Database`, so all n
 - A random PostgreSQL password and a 32-byte `MFA_ENCRYPTION_KEY` are generated on install and stored in `store.json`.
 - The PostgreSQL database is created automatically by the upstream `postgres` entrypoint on first start.
 - Joplin Server runs its own database migrations on startup (`DB_AUTO_MIGRATION` is on by default upstream).
-- Joplin Server creates a default admin account (`admin@localhost` / `admin`). An **important task** is surfaced after install prompting you to set a strong password via the **Reset User Password** action.
+- Joplin Server creates a default admin account (`admin@localhost` / `admin`). An **important task** is created only on fresh install prompting you to set a strong password via the **Reset User Password** action. Updates, restores, and container rebuilds do not create this first-run prompt.
 
 ---
 
