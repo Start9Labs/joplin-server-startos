@@ -21,16 +21,3 @@ export const long = {
   fr_FR:
     'Joplin Server vous permet de synchroniser vos notes, carnets, étiquettes et pièces jointes Joplin sur tous vos appareils via votre propre serveur, et de partager des notes avec d’autres utilisateurs. Il stocke toutes vos données dans une base de données PostgreSQL intégrée, de sorte que rien ne quitte votre appareil StartOS.',
 }
-
-export const alertInstall = {
-  en_US:
-    'Joplin Server is provided under the Joplin Server Personal Use License, which permits personal, non-commercial use only. By installing it you agree to those terms. See https://github.com/laurent22/joplin/blob/dev/packages/server/LICENSE.md',
-  es_ES:
-    'Joplin Server se ofrece bajo la Licencia de Uso Personal de Joplin Server, que solo permite el uso personal y no comercial. Al instalarlo, aceptas esos términos. Consulta https://github.com/laurent22/joplin/blob/dev/packages/server/LICENSE.md',
-  de_DE:
-    'Joplin Server wird unter der Joplin Server Personal Use License bereitgestellt, die nur die persönliche, nicht kommerzielle Nutzung erlaubt. Mit der Installation stimmst du diesen Bedingungen zu. Siehe https://github.com/laurent22/joplin/blob/dev/packages/server/LICENSE.md',
-  pl_PL:
-    'Joplin Server jest udostępniany na licencji Joplin Server Personal Use License, która zezwala wyłącznie na osobiste, niekomercyjne użycie. Instalując go, akceptujesz te warunki. Zobacz https://github.com/laurent22/joplin/blob/dev/packages/server/LICENSE.md',
-  fr_FR:
-    'Joplin Server est fourni sous la Joplin Server Personal Use License, qui n’autorise qu’un usage personnel et non commercial. En l’installant, vous acceptez ces conditions. Voir https://github.com/laurent22/joplin/blob/dev/packages/server/LICENSE.md',
-}

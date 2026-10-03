@@ -19,10 +19,6 @@ export const initializeService = sdk.setupOnInit(async (effects, kind) => {
       ),
     })
   } else {
-    const existing = await storeJson.read().once()
-    await storeJson.merge(effects, {
-      postgresPassword: existing?.postgresPassword || generatePassword(),
-      mfaEncryptionKey: existing?.mfaEncryptionKey || generateMfaKey(),
-    })
+    await storeJson.merge(effects, {})
   }
 })

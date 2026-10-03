@@ -19,9 +19,13 @@ export const main = sdk.setupMain(async ({ effects }) => {
 
   // Joplin builds absolute links from APP_BASE_URL, so it must resolve to a reachable address; prefer the LAN .local address.
   const derivedBaseUrl =
-    (await sdk.serviceInterface
-      .getOwn(effects, 'ui', (u) => {
-        const ai = u?.addressInfo
+    (await sdk.host
+      .getOwn(effects, 'ui-multi', (host) => {
+        const ai =
+          host &&
+          Object.values(host.bindings)
+            .flatMap((b) => Object.values(b.interfaces))
+            .find((i) => i.id === 'ui')?.addressInfo
         if (!ai) return ''
         return (
           ai.filter({ kind: 'mdns' }).format('urlstring')[0] ??
@@ -66,7 +70,7 @@ export const main = sdk.setupMain(async ({ effects }) => {
       }
     : { MAILER_ENABLED: 'false' }
 
-  const postgresSub = await sdk.SubContainer.of(
+  const postgresSub = sdk.SubContainer.of(
     effects,
     { imageId: 'postgres' },
     sdk.Mounts.of().mountVolume({
@@ -112,7 +116,7 @@ export const main = sdk.setupMain(async ({ effects }) => {
       requires: [],
     })
     .addDaemon('joplin', {
-      subcontainer: await sdk.SubContainer.of(
+      subcontainer: sdk.SubContainer.of(
         effects,
         { imageId: 'joplin-server' },
         sdk.Mounts.of(),

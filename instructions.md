@@ -3,13 +3,12 @@
 ## Documentation
 
 - [Joplin Server documentation](https://github.com/laurent22/joplin/blob/dev/packages/server/README.md) — the upstream server README and admin guide.
-- [Synchronising Joplin](https://joplinapp.org/help/apps/sync/) — how to connect the Joplin desktop, mobile, and terminal apps to a sync server.
+- [Synchronising Joplin](https://github.com/laurent22/joplin/blob/dev/readme/apps/sync/index.md) — how to connect the Joplin desktop, mobile, and terminal apps to a sync server.
 
 ## What you get on StartOS
 
-Joplin Server is the sync target for your Joplin apps. Point the Joplin desktop, mobile, and terminal clients at it and your notes, notebooks, tags, and attachments stay in sync across every device — stored in a PostgreSQL database bundled inside this package, on your own server. It also serves a web admin UI for managing users, and supports publishing and sharing notes.
-
-Both the admin UI and the client sync API are served on the same **Web UI** interface.
+- A **Web UI** interface that serves both the admin panel and the address your Joplin apps sync to.
+- A PostgreSQL database bundled inside the service, holding every user's notes and attachments, and included in backups.
 
 ## Getting set up
 
@@ -42,4 +41,4 @@ By default, self-registration is off — create additional users yourself from t
 
 ## Limitations
 
-- Joplin Server uses one base URL at a time. Client sync works from any reachable address, but the admin web UI is happiest when opened from the address **Set Base URL** points to.
+- Joplin Server is licensed for personal, non-commercial use only, under the [Joplin Server Personal Use License](https://github.com/laurent22/joplin/blob/dev/packages/server/LICENSE.md).
