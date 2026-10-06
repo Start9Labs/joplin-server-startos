@@ -65,12 +65,12 @@ The package writes no Joplin configuration file. It keeps its settings in `store
 | `postgresPassword` | Random at install             | Nothing                    | `POSTGRES_PASSWORD` to both containers |
 | `mfaEncryptionKey` | Random 32-byte hex at install | Nothing                    | `MFA_ENCRYPTION_KEY`                   |
 | `signupEnabled`    | `false`                       | **Enable/Disable Signups** | `SIGNUP_ENABLED`                       |
-| `appBaseUrl`       | Unset                         | **Set Base URL**           | `APP_BASE_URL`, when set               |
+| `appBaseUrl`       | Unset                         | **Set Base URL**           | `APP_BASE_URL`                         |
 | `smtp`             | Disabled                      | **Configure Email (SMTP)** | `MAILER_*`                             |
 
 Any change to `store.json` restarts the service with the new values. Never change `postgresPassword` or `mfaEncryptionKey` by hand: PostgreSQL keeps the password it was initialized with, and the key decrypts users' stored two-factor secrets.
 
-When `appBaseUrl` is unset, `APP_BASE_URL` is derived from the Web UI interface, preferring its `.local` address, then a domain, then any other non-local address.
+`APP_BASE_URL` is `appBaseUrl` followed to its hostname's current port and scheme (`sdk.setupPrimaryUrl`). While `appBaseUrl` is unset or its hostname is no longer one of the Web UI interface's addresses, it is the interface's preferred address instead — a public domain (HTTPS first), else the `.local` address, else the first — and the stored choice is kept for when its hostname returns.
 
 The package also sets, on every launch: `DB_CLIENT=pg` and `POSTGRES_HOST=127.0.0.1` (the bundled database), `MFA_ENABLED=1` (two-factor available, opt-in per user), `MAX_TIME_DRIFT=0` (skips upstream's NTP check, which needs outbound NTP), and `RUNNING_IN_DOCKER=false` (the image's default rewrites a localhost database host to `host.docker.internal`).
 
@@ -90,13 +90,13 @@ One interface serves both the admin web UI and the sync API the Joplin apps conn
 | --------- | ---- | ----- | -------- | ------------------------------------ |
 | `ui`      | ui   | 22300 | HTTP     | Admin/web UI and the client sync API |
 
-Joplin builds absolute links (share links, emails, web UI redirects) from the single `APP_BASE_URL`. Client sync works from any reachable address; the web UI works best opened from the base URL.
+Joplin builds absolute links (share links, emails, web UI redirects) from the single `APP_BASE_URL`. Client sync works from any reachable address; the web UI works best opened from the base URL, so the interface nominates it (`preferredLauncherAddress`) and **Open UI** opens it.
 
 ---
 
 ## Installation and First-Run Flow
 
-Install generates the database password and the two-factor encryption key, and raises a task to replace upstream's default admin login. PostgreSQL initializes its database on first start, and Joplin runs its own schema migrations on every start.
+Install generates the database password and the two-factor encryption key, and raises tasks to replace upstream's default admin login and to choose the base URL. PostgreSQL initializes its database on first start, and Joplin runs its own schema migrations on every start.
 
 Joplin creates a default admin, `admin@localhost` / `admin`, on first start. The package does not change it; the **Reset User Password** task prompts the user to.
 
@@ -110,21 +110,22 @@ Four actions, all of which change one `store.json` key or one database row.
 
 **Configure Email (SMTP)** — when users need verification, password-reset or share emails; without it those features are inactive. Uses the system SMTP server or a custom one. Restarts the service.
 
-**Set Base URL** — when users reach the server mainly at an address other than the derived one, such as a public domain or `.onion`. Setting it pins `APP_BASE_URL`; clearing it returns to the derived address. Restarts the service.
+**Set Base URL** — at install, and when users should reach the server mainly at another of its addresses, such as a public domain or `.onion`. Picks one of the Web UI interface's addresses (the form preselects the preferred one); it becomes `APP_BASE_URL` and the address Open UI opens. Restarts the service.
 
-**Enable/Disable Signups** — shown as **Enable Signups** or **Disable Signups** depending on the current state. While enabled, anyone who can reach the server can register. Restarts the service.
+**Enable/Disable Signups** — shown as **Enable Signups** or **Disable Signups** depending on the current state. While enabled, anyone who can reach the server can register. Both directions ask for confirmation before running, naming what changes. Restarts the service.
 
 ---
 
 ## Tasks
 
-One task, raised only on a fresh install.
+Two tasks.
 
-| Task                    | Severity  | Raised when     | Cleared by                           |
-| ----------------------- | --------- | --------------- | ------------------------------------ |
-| **Reset User Password** | important | A fresh install | Running the action. Does not return. |
+| Task                    | Severity  | Raised when                                                                       | Cleared by                                                      |
+| ----------------------- | --------- | --------------------------------------------------------------------------------- | --------------------------------------------------------------- |
+| **Reset User Password** | important | A fresh install                                                                   | Running the action. Does not return.                            |
+| **Set Base URL**        | important | No base URL is chosen, or its hostname is no longer one of the Web UI's addresses | Choosing one of the addresses, or the chosen hostname returning |
 
-Updates and restores do not raise it. The service is never held on a critical task.
+Updates and restores do not raise Reset User Password. Set Base URL comes from `primaryUrl.setupTask` and re-runs when the interface's addresses change; a port change alone does not raise it. While it is open the service runs on the preferred address. The service is never held on a critical task.
 
 ---
 
@@ -201,6 +202,7 @@ actions:
   - toggle-signups
 tasks:
   - { action: reset-password, severity: important }
+  - { action: set-base-url, severity: important }
 health_checks:
   - postgres
   - joplin

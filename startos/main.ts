@@ -2,6 +2,7 @@ import { T } from '@start9labs/start-sdk'
 import { i18n } from './i18n'
 import { sdk } from './sdk'
 import { storeJson } from './fileModels/store.json'
+import { primaryUrl } from './primaryUrl'
 import { postgresDb, postgresPort, postgresUser, uiPort } from './utils'
 
 export const main = sdk.setupMain(async ({ effects }) => {
@@ -13,29 +14,9 @@ export const main = sdk.setupMain(async ({ effects }) => {
     (await storeJson.read((s) => s.mfaEncryptionKey).const(effects)) ?? ''
   const signupEnabled =
     (await storeJson.read((s) => s.signupEnabled).const(effects)) ?? false
-  const baseUrlOverride =
-    (await storeJson.read((s) => s.appBaseUrl).const(effects)) ?? ''
   const smtpSelection = await storeJson.read((s) => s.smtp).const(effects)
 
-  // Joplin builds absolute links from APP_BASE_URL, so it must resolve to a reachable address; prefer the LAN .local address.
-  const derivedBaseUrl =
-    (await sdk.host
-      .getOwn(effects, 'ui-multi', (host) => {
-        const ai =
-          host &&
-          Object.values(host.bindings)
-            .flatMap((b) => Object.values(b.interfaces))
-            .find((i) => i.id === 'ui')?.addressInfo
-        if (!ai) return ''
-        return (
-          ai.filter({ kind: 'mdns' }).format('urlstring')[0] ??
-          ai.filter({ kind: 'domain' }).format('urlstring')[0] ??
-          ai.nonLocal.format('urlstring')[0] ??
-          ''
-        )
-      })
-      .const()) ?? ''
-  const appBaseUrl = baseUrlOverride || derivedBaseUrl
+  const appBaseUrl = (await primaryUrl.bestUsable(effects).const()) ?? ''
 
   let smtpCredentials: T.SmtpValue | null = null
   if (smtpSelection?.selection === 'system') {

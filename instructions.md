@@ -15,12 +15,13 @@
 Follow these steps for a fresh installation. After an update or restore, use your existing Joplin credentials; you do not need to reset the admin password again.
 
 1. Open Joplin Server from the **Dashboard** tab and start it.
-2. Run the **Reset User Password** action. Leave the email as `admin@localhost` (the built-in admin) and run it — you'll get a strong password back. Joplin ships with a default `admin@localhost` / `admin` login, so do this before anything else.
-3. Open the **Web UI** and sign in with `admin@localhost` and your new password. Change the admin email and finish any profile setup from the web UI.
-4. In your Joplin app, go to **Configuration → Synchronisation**, choose **Joplin Server** as the sync target, and enter:
+2. Complete the **Set Base URL** task: pick the address you will mostly reach Joplin Server at. Joplin builds its links from it.
+3. Run the **Reset User Password** action. Leave the email as `admin@localhost` (the built-in admin) and run it — you'll get a strong password back. Joplin ships with a default `admin@localhost` / `admin` login, so do this before you sign in.
+4. Open the **Web UI** and sign in with `admin@localhost` and your new password. Change the admin email and finish any profile setup from the web UI.
+5. In your Joplin app, go to **Configuration → Synchronisation**, choose **Joplin Server** as the sync target, and enter:
    - **URL:** the Joplin Server **Web UI** address (copy it from the interface panel)
-   - **Email** and **Password:** the credentials from step 2
-5. Run a sync from the app. Repeat the app configuration on each device you want to keep in sync.
+   - **Email** and **Password:** the credentials from step 3
+6. Run a sync from the app. Repeat the app configuration on each device you want to keep in sync.
 
 ## Using Joplin Server
 
@@ -36,7 +37,7 @@ By default, self-registration is off — create additional users yourself from t
 
 - **Reset User Password** — generate a new password for any account by email. Use it for the initial admin setup or if anyone is locked out.
 - **Configure Email (SMTP)** — add an SMTP server so Joplin Server can send account-verification, password-reset, and share-notification emails. Without it, those email features stay inactive.
-- **Set Base URL** — Joplin builds share links, email links, and web UI redirects from a single base URL. It defaults to your `.local` address; set this to a custom domain or `.onion` address if you primarily reach Joplin Server there. The admin web UI works best when opened from the address the base URL is set to; client sync works from any reachable address.
+- **Set Base URL** — Joplin builds share links, email links, and web UI redirects from a single base URL, chosen from Joplin Server's addresses. A task asks you to choose it after install, and again if the chosen address is ever removed; until then Joplin Server uses a public domain if you have added one, otherwise your `.local` address. Choose a custom domain or `.onion` address if you primarily reach Joplin Server there. **Open UI** opens the base URL, where the admin web UI works best; client sync works from any reachable address.
 - **Enable / Disable Signups** — toggle self-registration of new accounts.
 
 ## Limitations
