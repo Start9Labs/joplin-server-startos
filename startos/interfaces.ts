@@ -1,4 +1,5 @@
 import { i18n } from './i18n'
+import { primaryUrl } from './primaryUrl'
 import { sdk } from './sdk'
 import { uiPort } from './utils'
 
@@ -7,16 +8,19 @@ export const setInterfaces = sdk.setupInterfaces(async ({ effects }) => {
   const uiMultiOrigin = await uiMulti.bindPort(uiPort, {
     protocol: 'http',
   })
+  const preferredLauncherAddress = await primaryUrl.bestUsable(effects).const()
+
   const ui = sdk.createInterface(effects, {
     name: i18n('Web UI'),
     id: 'ui',
-    description: i18n('The web interface of Hello World'),
+    description: i18n('The Joplin Server web interface'),
     type: 'ui',
     masked: false,
     schemeOverride: null,
     username: null,
     path: '',
     query: {},
+    preferredLauncherAddress,
   })
 
   const uiReceipt = await uiMultiOrigin.export([ui])

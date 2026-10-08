@@ -1,17 +1,20 @@
 # Updating the upstream version
 
-This package wraps Start9 Labs' own [hello-world](https://github.com/Start9Labs/hello-world) source, which we build and publish ourselves as `ghcr.io/start9labs/hello-world`. "Upstream" here means that source repo, not the image namespace.
+This package wraps the unmodified `joplin/server` image and bundles an internal `postgres` image.
 
 ## Determining the upstream version
 
-- **hello-world** ([Start9Labs/hello-world](https://github.com/Start9Labs/hello-world)) — fetch the latest release tag:
+- Check the [Joplin Server changelog](https://github.com/laurent22/joplin/blob/dev/readme/about/changelog/server.md), not the Joplin client release tags.
+- Confirm the corresponding stable `joplin/server:<version>` tag exists on [Docker Hub](https://hub.docker.com/r/joplin/server/tags). Upstream documents `latest` as the most recent released server and `beta` as the most recent beta.
+- Verify the image supports both `linux/amd64` and `linux/arm64` before updating the pin.
 
-  ```sh
-  gh release view -R Start9Labs/hello-world --json tagName -q .tagName
-  ```
-
-  The current pin lives in `startos/manifest/index.ts` at `images['hello-world'].source.dockerTag` (the version after the `:` in `ghcr.io/start9labs/hello-world:<version>`).
+The image pins live in `startos/manifest/index.ts` at `images['joplin-server'].source.dockerTag` and `images.postgres.source.dockerTag`.
 
 ## Applying the bump
 
-- Bump `dockerTag` in `startos/manifest/index.ts` to `ghcr.io/start9labs/hello-world:<new version>` (drop the leading `v` from the release tag).
+1. Update the Joplin image pin in `startos/manifest/index.ts`.
+2. Update `version` and `releaseNotes` in `startos/versions/current.ts`, using the server version followed by `:0` for a new upstream release.
+3. Review upstream changes to environment variables, database migrations, authentication, and the sync API.
+4. Run `npm ci` and `make`. Verify startup, password-reset login, and a client sync against the installed package.
+
+PostgreSQL patch updates within the pinned major follow its image tag. A PostgreSQL major upgrade needs a database migration plan; do not simply change the major tag against an existing data directory.
