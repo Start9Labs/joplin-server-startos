@@ -17,7 +17,9 @@ export const toggleSignups = sdk.Action.withoutInput(
             'Signups are currently disabled. Run this action to allow new users to register their own accounts.',
           ),
       warning: enabled
-        ? null
+        ? i18n(
+            'New users can no longer register their own accounts. Existing accounts are unaffected, and admins can still create users from the admin panel.',
+          )
         : i18n(
             'Anyone with access to your Joplin Server URL will be able to create an account.',
           ),

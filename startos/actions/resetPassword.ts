@@ -60,7 +60,9 @@ export const resetPassword = sdk.Action.withInput(
       )
       if (existing.rows.length === 0) {
         throw new Error(
-          `No Joplin Server user found with email "${input.email}"`,
+          i18n('No Joplin Server user found with email "${email}"', {
+            email: input.email,
+          }),
         )
       }
       await client.query(

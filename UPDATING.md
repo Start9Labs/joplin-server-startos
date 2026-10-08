@@ -15,6 +15,6 @@ The image pins live in `startos/manifest/index.ts` at `images['joplin-server'].s
 1. Update the Joplin image pin in `startos/manifest/index.ts`.
 2. Update `version` and `releaseNotes` in `startos/versions/current.ts`, using the server version followed by `:0` for a new upstream release.
 3. Review upstream changes to environment variables, database migrations, authentication, and the sync API.
-4. Run `npm ci`, `npm run check`, and `make`. Verify startup, password-reset login, and a client sync against the installed package.
+4. Run `npm ci` and `make`. Verify startup, password-reset login, and a client sync against the installed package.
 
 PostgreSQL patch updates within the pinned major follow its image tag. A PostgreSQL major upgrade needs a database migration plan; do not simply change the major tag against an existing data directory.
