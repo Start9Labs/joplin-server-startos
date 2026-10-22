@@ -32,11 +32,11 @@
 
 ## Image and Container Runtime
 
-Two upstream images run unmodified, each in its own subcontainer; Joplin Server starts only once PostgreSQL reports ready.
+Two upstream images, each in its own subcontainer; Joplin Server starts only once PostgreSQL reports ready. `joplin/server` is built through the root `Dockerfile`, which installs Debian's CA store and sets `NODE_OPTIONS=--use-openssl-ca` so Node verifies against it — a temporary layer that comes out once upstream ships an image whose Node no longer trusts the compromised eMudhra roots. `postgres` runs unmodified.
 
 | Property      | Value                                                                                             |
 | ------------- | ------------------------------------------------------------------------------------------------- |
-| Images        | `joplin/server` and `postgres`, both upstream unmodified                                          |
+| Images        | `joplin/server` (with the root `Dockerfile`) and `postgres` (unmodified)                          |
 | Architectures | x86_64, aarch64                                                                                   |
 | Entrypoints   | Upstream for both; PostgreSQL gets `-c listen_addresses=127.0.0.1`                                |
 | Subcontainers | `postgres-sub` — the database, reachable only on localhost; `joplin-sub` — Joplin Server on 22300 |
