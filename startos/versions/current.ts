@@ -1,7 +1,7 @@
 import { IMPOSSIBLE, VersionInfo } from '@start9labs/start-sdk'
 
 export const current = VersionInfo.of({
-  version: '3.7.1:0',
+  version: '3.7.3:0',
   releaseNotes: {
     en_US: 'Initial release of Joplin Server for StartOS.',
     es_ES: 'Versión inicial de Joplin Server para StartOS.',

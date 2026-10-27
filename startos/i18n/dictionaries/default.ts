@@ -29,9 +29,9 @@ const dict = {
 
   // primaryUrl.ts, init/primaryUrlTask.ts
   'Base URL': 17,
-  'Choose the URL Joplin Server builds its links from.': 18,
+  'Choose the one address Joplin Server answers on.': 18,
   'Set Base URL': 19,
-  'Choose the URL Joplin Server builds share links, email links and web UI redirects from. Open UI opens this address. Joplin Server restarts to apply a change.': 20,
+  'Choose the one address Joplin Server answers on: the web UI and every Joplin app must use it, and share and email links point to it. Requests to any other address are refused. Joplin Server restarts to apply a change.': 20,
 
   // actions/toggleSignups.ts
   'Enable Signups': 21,
@@ -42,7 +42,7 @@ const dict = {
   'New users can no longer register their own accounts. Existing accounts are unaffected, and admins can still create users from the admin panel.': 27,
 
   // init/initializeService.ts
-  'Joplin Server ships with default admin credentials (admin@localhost / admin). Set a strong password from the "Reset User Password" action right away.': 26,
+  'Run Reset User Password to get the admin login (admin@localhost) for the web UI and your Joplin apps.': 26,
 } as const
 
 /**
