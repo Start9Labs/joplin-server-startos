@@ -3,7 +3,13 @@ import { i18n } from './i18n'
 import { sdk } from './sdk'
 import { storeJson } from './fileModels/store.json'
 import { primaryUrl } from './primaryUrl'
-import { postgresDb, postgresPort, postgresUser, uiPort } from './utils'
+import {
+  generatePassword,
+  postgresDb,
+  postgresPort,
+  postgresUser,
+  uiPort,
+} from './utils'
 
 export const main = sdk.setupMain(async ({ effects }) => {
   console.info(i18n('Starting Joplin Server!'))
@@ -118,6 +124,8 @@ export const main = sdk.setupMain(async ({ effects }) => {
           MFA_ENABLED: '1',
           MFA_ENCRYPTION_KEY: mfaEncryptionKey,
           MAX_TIME_DRIFT: '0',
+          // Joplin reads this only when it creates admin@localhost on a fresh database; nobody ever sees it.
+          DEFAULT_ADMIN_PASSWORD: generatePassword(),
           // The image sets RUNNING_IN_DOCKER=1, which rewrites a localhost POSTGRES_HOST to host.docker.internal; our DB shares localhost, so force it off.
           RUNNING_IN_DOCKER: 'false',
           ...mailerEnv,

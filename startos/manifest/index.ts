@@ -13,7 +13,7 @@ export const manifest = setupManifest({
   volumes: ['main', 'db'],
   images: {
     'joplin-server': {
-      source: { dockerBuild: { buildArgs: { IMAGE: 'joplin/server:3.7.1' } } },
+      source: { dockerBuild: { buildArgs: { IMAGE: 'joplin/server:3.7.3' } } },
       arch: ['x86_64', 'aarch64'],
     },
     postgres: {

@@ -72,7 +72,7 @@ Any change to `store.json` restarts the service with the new values. Never chang
 
 `APP_BASE_URL` is `appBaseUrl` followed to its hostname's current port and scheme (`sdk.setupPrimaryUrl`). While `appBaseUrl` is unset or its hostname is no longer one of the Web UI interface's addresses, it is the interface's preferred address instead — a public domain (HTTPS first), else the `.local` address, else the first — and the stored choice is kept for when its hostname returns.
 
-The package also sets, on every launch: `DB_CLIENT=pg` and `POSTGRES_HOST=127.0.0.1` (the bundled database), `MFA_ENABLED=1` (two-factor available, opt-in per user), `MAX_TIME_DRIFT=0` (skips upstream's NTP check, which needs outbound NTP), and `RUNNING_IN_DOCKER=false` (the image's default rewrites a localhost database host to `host.docker.internal`).
+The package also sets, on every launch: `DB_CLIENT=pg` and `POSTGRES_HOST=127.0.0.1` (the bundled database), `MFA_ENABLED=1` (two-factor available, opt-in per user), `MAX_TIME_DRIFT=0` (skips upstream's NTP check, which needs outbound NTP), `RUNNING_IN_DOCKER=false` (the image's default rewrites a localhost database host to `host.docker.internal`), and a random `DEFAULT_ADMIN_PASSWORD` (see Installation and First-Run Flow).
 
 ---
 
@@ -90,15 +90,15 @@ One interface serves both the admin web UI and the sync API the Joplin apps conn
 | --------- | ---- | ----- | -------- | ------------------------------------ |
 | `ui`      | ui   | 22300 | HTTP     | Admin/web UI and the client sync API |
 
-Joplin builds absolute links (share links, emails, web UI redirects) from the single `APP_BASE_URL`. Client sync works from any reachable address; the web UI works best opened from the base URL, so the interface nominates it (`preferredLauncherAddress`) and **Open UI** opens it.
+Joplin answers only on the host of `APP_BASE_URL`: a request whose `Host` is any other of the interface's addresses — web UI and sync API alike — gets `404 Invalid origin`. Every client must therefore use the base URL, which is why the interface nominates it (`preferredLauncherAddress`) and **Open UI** opens it. Joplin also builds share links and email links from it.
 
 ---
 
 ## Installation and First-Run Flow
 
-Install generates the database password and the two-factor encryption key, and raises tasks to replace upstream's default admin login and to choose the base URL. PostgreSQL initializes its database on first start, and Joplin runs its own schema migrations on every start.
+Install generates the database password and the two-factor encryption key, and raises tasks to get the admin login and to choose the base URL. PostgreSQL initializes its database on first start, and Joplin runs its own schema migrations on every start.
 
-Joplin creates a default admin, `admin@localhost` / `admin`, on first start. The package does not change it; the **Reset User Password** task prompts the user to.
+Joplin creates its admin, `admin@localhost`, on first start. The package passes a fresh random `DEFAULT_ADMIN_PASSWORD` on every launch, so upstream's `admin` password never exists and the generated one is never shown; the admin's first usable password comes from **Reset User Password**, which the install task points at. Joplin ignores the variable once its database exists.
 
 ---
 
@@ -106,11 +106,11 @@ Joplin creates a default admin, `admin@localhost` / `admin`, on first start. The
 
 Four actions, all of which change one `store.json` key or one database row.
 
-**Reset User Password** — when the default admin login is still in place, or any user is locked out. Upstream has no password-reset command, so this generates a 24-character password and writes its bcrypt hash straight into the `users` table for the given email (default `admin@localhost`). Needs the database running; fails if no user has that email. Each run replaces the previous password. Outputs the email and new password.
+**Reset User Password** — after install, to get the admin's first password, and whenever any user is locked out. Upstream has no password-reset command, so this generates a 24-character password and writes its bcrypt hash straight into the `users` table for the given email (default `admin@localhost`). Needs the database running; fails if no user has that email. Each run replaces the previous password. Outputs the email and new password.
 
 **Configure Email (SMTP)** — when users need verification, password-reset or share emails; without it those features are inactive. Uses the system SMTP server or a custom one. Restarts the service.
 
-**Set Base URL** — at install, and when users should reach the server mainly at another of its addresses, such as a public domain or `.onion`. Picks one of the Web UI interface's addresses (the form preselects the preferred one); it becomes `APP_BASE_URL` and the address Open UI opens. Restarts the service.
+**Set Base URL** — at install, and when clients must reach the server at another of its addresses, such as a public domain or `.onion`. Picks one of the Web UI interface's addresses (the form preselects the preferred one); it becomes `APP_BASE_URL`, the only address Joplin answers on, and the address Open UI opens. Every Joplin app syncing to the old address must be repointed. Restarts the service.
 
 **Enable/Disable Signups** — shown as **Enable Signups** or **Disable Signups** depending on the current state. While enabled, anyone who can reach the server can register. Both directions ask for confirmation before running, naming what changes. Restarts the service.
 
@@ -151,7 +151,7 @@ The database is dumped with `pg_dump` and the `main` volume is copied. The `db` 
 ## Limitations and Differences
 
 1. **Personal, non-commercial use only.** Joplin Server is under the Joplin Server Personal Use License.
-2. **One base URL.** Links and redirects use `APP_BASE_URL` only.
+2. **One address.** Joplin answers only on `APP_BASE_URL`'s host; the interface's other addresses return 404, so LAN, `.onion` and clearnet clients cannot each use their own address.
 3. **No transcription service.** The optional `joplin/transcribe` companion for handwriting OCR is not included.
 4. **No clock-drift check.** `MAX_TIME_DRIFT=0`; the server clock is not verified against NTP.
 
@@ -184,6 +184,7 @@ startos_managed_env_vars:
   - MFA_ENCRYPTION_KEY
   - MAX_TIME_DRIFT
   - RUNNING_IN_DOCKER
+  - DEFAULT_ADMIN_PASSWORD
   - MAILER_ENABLED
   - MAILER_HOST
   - MAILER_PORT

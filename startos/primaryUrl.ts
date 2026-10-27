@@ -9,7 +9,7 @@ export const primaryUrl = sdk.setupPrimaryUrl({
   metadata: {
     name: i18n('Set Base URL'),
     description: i18n(
-      'Choose the URL Joplin Server builds share links, email links and web UI redirects from. Open UI opens this address. Joplin Server restarts to apply a change.',
+      'Choose the one address Joplin Server answers on: the web UI and every Joplin app must use it, and share and email links point to it. Requests to any other address are refused. Joplin Server restarts to apply a change.',
     ),
     warning: null,
     allowedStatuses: 'any',
