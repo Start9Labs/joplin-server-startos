@@ -66,7 +66,7 @@ export const resetPassword = sdk.Action.withInput(
         )
       }
       await client.query(
-        'UPDATE users SET password = $1, updated_time = $2 WHERE email = $3',
+        'UPDATE users SET password = $1, must_set_password = 0, updated_time = $2 WHERE email = $3',
         [hash, Date.now(), input.email],
       )
     } finally {

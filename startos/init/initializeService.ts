@@ -15,7 +15,7 @@ export const initializeService = sdk.setupOnInit(async (effects, kind) => {
 
     await sdk.action.createOwnTask(effects, resetPassword, 'important', {
       reason: i18n(
-        'Joplin Server ships with default admin credentials (admin@localhost / admin). Set a strong password from the "Reset User Password" action right away.',
+        'Run Reset User Password to get the admin login (admin@localhost) for the web UI and your Joplin apps.',
       ),
     })
   } else {
